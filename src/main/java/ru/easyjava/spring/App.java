@@ -1,0 +1,44 @@
+package ru.easyjava.spring;
+
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context
+        .annotation.AnnotationConfigApplicationContext;
+
+/**
+ * Application main class.
+ */
+public final class App {
+    /**
+     * Do not construct me.
+     */
+    private App() { }
+
+    /**
+     * Application entry point.
+     * @param args Array of command line arguments.
+     */
+    public static void main(final String[] args) {
+        ApplicationContext context =
+                new AnnotationConfigApplicationContext("ru.easyjava.spring");
+
+        AutowireCapableBeanFactory bf = context.getAutowireCapableBeanFactory();
+        GreeterService greeterBean = bf.createBean(GreeterService.class);
+
+        System.out.println(greeterBean.greet());
+
+        GenericBeanDefinition gbd = new GenericBeanDefinition();
+        gbd.setBeanClass(GreeterService.class);
+        gbd.setAutowireCandidate(true);
+        gbd.setScope("singleton");
+        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) bf;
+        registry.registerBeanDefinition("greeter", gbd);
+
+        GreeterService greeter = (GreeterService) context.getBean("greeter");
+
+        System.out.println(greeter.greet());
+
+    }
+}
